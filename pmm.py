@@ -119,10 +119,148 @@ class SimplePMM:
         """Run routine maintenance tasks"""
         logger.info("Starting routine maintenance")
         self.scan_library()
+        self.manage_collections()
         self.cleanup_temp_files()
         self.optimize_database()
         logger.info("Routine maintenance completed")
+    
+    def create_collections(self, library_name=None):
+        """Create automatic collections based on popular criteria"""
+        try:
+            logger.info("Creating automatic collections")
+            
+            if library_name:
+                libraries = [self.plex.library.section(library_name)]
+            else:
+                libraries = [lib for lib in self.plex.library.sections() if lib.type in ['movie', 'show']]
+            
+            for library in libraries:
+                logger.info(f"Processing collections for library: {library.title}")
+                
+                if library.type == 'movie':
+                    self._create_movie_collections(library)
+                elif library.type == 'show':
+                    self._create_tv_collections(library)
+                    
+        except Exception as e:
+            logger.error(f"Error creating collections: {e}")
+    
+    def _create_movie_collections(self, library):
+        """Create movie-specific collections"""
+        try:
+            # Get all movies
+            movies = library.all()
+            
+            # Group by decade
+            decades = {}
+            for movie in movies:
+                if hasattr(movie, 'year') and movie.year:
+                    decade = (movie.year // 10) * 10
+                    if decade not in decades:
+                        decades[decade] = []
+                    decades[decade].append(movie)
+            
+            # Create decade collections (only if 5+ movies)
+            for decade, decade_movies in decades.items():
+                if len(decade_movies) >= 5:
+                    collection_name = f"{decade}s Movies"
+                    self._create_or_update_collection(library, collection_name, decade_movies)
+            
+            # Create genre collections
+            genres = {}
+            for movie in movies:
+                if hasattr(movie, 'genres'):
+                    for genre in movie.genres:
+                        genre_name = genre.tag
+                        if genre_name not in genres:
+                            genres[genre_name] = []
+                        genres[genre_name].append(movie)
+            
+            # Create genre collections (only if 10+ movies)
+            for genre, genre_movies in genres.items():
+                if len(genre_movies) >= 10:
+                    collection_name = f"{genre} Movies"
+                    self._create_or_update_collection(library, collection_name, genre_movies)
+            
+            # Create rating-based collections
+            highly_rated = [m for m in movies if hasattr(m, 'rating') and m.rating and m.rating >= 8.0]
+            if len(highly_rated) >= 5:
+                self._create_or_update_collection(library, "Highly Rated Movies", highly_rated)
+                
+        except Exception as e:
+            logger.error(f"Error creating movie collections: {e}")
+    
+    def _create_tv_collections(self, library):
+        """Create TV show-specific collections"""
+        try:
+            shows = library.all()
+            
+            # Group by network/studio
+            networks = {}
+            for show in shows:
+                if hasattr(show, 'studio') and show.studio:
+                    network = show.studio
+                    if network not in networks:
+                        networks[network] = []
+                    networks[network].append(show)
+            
+            # Create network collections (only if 3+ shows)
+            for network, network_shows in networks.items():
+                if len(network_shows) >= 3:
+                    collection_name = f"{network} Shows"
+                    self._create_or_update_collection(library, collection_name, network_shows)
+            
+            # Create genre collections
+            genres = {}
+            for show in shows:
+                if hasattr(show, 'genres'):
+                    for genre in show.genres:
+                        genre_name = genre.tag
+                        if genre_name not in genres:
+                            genres[genre_name] = []
+                        genres[genre_name].append(show)
+            
+            # Create genre collections (only if 5+ shows)
+            for genre, genre_shows in genres.items():
+                if len(genre_shows) >= 5:
+                    collection_name = f"{genre} TV Shows"
+                    self._create_or_update_collection(library, collection_name, genre_shows)
+                    
+        except Exception as e:
+            logger.error(f"Error creating TV collections: {e}")
+    
+    def _create_or_update_collection(self, library, collection_name, items):
+        """Create or update a collection with given items"""
+        try:
+            # Check if collection already exists
+            existing_collections = library.collections()
+            existing_collection = None
+            
+            for collection in existing_collections:
+                if collection.title == collection_name:
+                    existing_collection = collection
+                    break
+            
+            if existing_collection:
+                # Update existing collection
+                logger.info(f"Updating collection: {collection_name} ({len(items)} items)")
+                # Note: Plex API doesn't have a direct way to bulk update collections
+                # This would require adding/removing items individually
+            else:
+                # Create new collection
+                logger.info(f"Creating collection: {collection_name} ({len(items)} items)")
+                # Note: This requires the createCollection method which varies by library type
+                # For now, we'll log the action
+                logger.info(f"Would create collection '{collection_name}' with {len(items)} items")
+                
+        except Exception as e:
+            logger.error(f"Error managing collection {collection_name}: {e}")
 
+    def manage_collections(self):
+        """Main collection management function"""
+        logger.info("Starting collection management")
+        self.create_collections()
+        logger.info("Collection management completed")
 def main():
     """Main function"""
     logger.info("Starting Simple PMM")

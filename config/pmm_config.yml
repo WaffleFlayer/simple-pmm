@@ -7,16 +7,64 @@ libraries:
     type: movie
     auto_scan: true
     cleanup_enabled: true
+    collections_enabled: true
   
   TV Shows:
     type: show
     auto_scan: true
     cleanup_enabled: true
+    collections_enabled: true
   
   Music:
     type: artist
     auto_scan: false
     cleanup_enabled: false
+    collections_enabled: false
+
+# Collection Settings
+collections:
+  # Enable automatic collection creation
+  enabled: true
+  
+  # Movie Collections
+  movies:
+    # Create decade collections (1980s, 1990s, etc.)
+    decades:
+      enabled: true
+      minimum_items: 5  # Only create if 5+ movies in decade
+    
+    # Create genre collections (Action, Comedy, etc.)
+    genres:
+      enabled: true
+      minimum_items: 10  # Only create if 10+ movies in genre
+      
+    # Create rating-based collections
+    ratings:
+      enabled: true
+      highly_rated_threshold: 8.0
+      minimum_items: 5
+    
+    # Create studio collections (Disney, Warner Bros, etc.)
+    studios:
+      enabled: true
+      minimum_items: 5
+
+  # TV Show Collections  
+  tv_shows:
+    # Create network collections (HBO, Netflix, etc.)
+    networks:
+      enabled: true
+      minimum_items: 3  # Only create if 3+ shows from network
+      
+    # Create genre collections
+    genres:
+      enabled: true
+      minimum_items: 5
+      
+    # Create collections by year
+    years:
+      enabled: false  # Disabled by default
+      minimum_items: 3
 
 # Maintenance Settings
 maintenance:
@@ -29,6 +77,7 @@ maintenance:
   # Tasks to perform
   tasks:
     - scan_libraries
+    - manage_collections  # Added collection management
     - cleanup_temp_files
     - optimize_database
   

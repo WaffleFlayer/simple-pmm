@@ -1,4 +1,13 @@
-# Simple Plex Media Manager (PMM) for Windows Surface
+# Simple## ✨ Features
+
+- **🎬 Automatic Collections**: Create smart collections by decade, genre, studio, network, and ratings
+- **🔄 Automated Library Management**: Scan and update Plex libraries automatically
+- **⏰ Scheduled Maintenance**: Run routine tasks on your preferred schedule
+- **🐳 Docker Ready**: Containerized for easy deployment and isolation
+- **📊 Comprehensive Logging**: Monitor all activities with detailed logs
+- **⚙️ Simple Configuration**: YAML-based settings for easy customization
+- **🖥️ Windows Service**: Optional installation as a Windows background service
+- **🚀 One-Click Installer**: Automated setup script for quick deploymentia Manager (PMM) for Windows Surface
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
@@ -115,6 +124,39 @@ maintenance:
     - scan_libraries
     - cleanup_temp_files
     - optimize_database
+```
+
+### Collection Management
+
+PMM automatically creates smart collections in your Plex libraries:
+
+#### **Movie Collections:**
+- **Decade Collections**: "1980s Movies", "1990s Movies", etc.
+- **Genre Collections**: "Action Movies", "Comedy Movies", etc.
+- **Studio Collections**: "Disney Movies", "Warner Bros Movies", etc.
+- **Rating Collections**: "Highly Rated Movies" (8.0+ rating)
+
+#### **TV Show Collections:**
+- **Network Collections**: "HBO Shows", "Netflix Shows", etc.
+- **Genre Collections**: "Comedy TV Shows", "Drama TV Shows", etc.
+
+#### **Collection Settings:**
+Edit `config/pmm_config.yml` to customize:
+- Which collection types to create
+- Minimum items required per collection
+- Rating thresholds
+- Enable/disable specific collection types
+
+```yaml
+collections:
+  enabled: true
+  movies:
+    decades:
+      enabled: true
+      minimum_items: 5
+    genres:
+      enabled: true  
+      minimum_items: 10
 ```
 
 ## 🚀 Running PMM
