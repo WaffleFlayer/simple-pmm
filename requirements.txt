@@ -1,0 +1,7 @@
+# Plex Media Manager Dependencies
+pyyaml>=6.0
+requests>=2.31.0
+plexapi>=4.15.0
+docker>=6.1.0
+python-dotenv>=1.0.0
+schedule>=1.2.0

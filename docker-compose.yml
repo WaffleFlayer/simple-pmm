@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  pmm:
+    build: .
+    container_name: simple-pmm
+    restart: unless-stopped
+    environment:
+      - PLEX_URL=${PLEX_URL}
+      - PLEX_TOKEN=${PLEX_TOKEN}
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      - PMM_LOG_LEVEL=${PMM_LOG_LEVEL}
+      - AUTO_RUN_ENABLED=${AUTO_RUN_ENABLED}
+      - RUN_SCHEDULE=${RUN_SCHEDULE}
+    volumes:
+      - ./config:/app/config
+      - ./logs:/app/logs
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - plex-network
+
+networks:
+  plex-network:
+    external: true

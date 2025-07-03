@@ -1,0 +1,51 @@
+# Simple PMM Configuration
+# Basic configuration for your Plex Media Manager
+
+# Library Settings
+libraries:
+  Movies:
+    type: movie
+    auto_scan: true
+    cleanup_enabled: true
+  
+  TV Shows:
+    type: show
+    auto_scan: true
+    cleanup_enabled: true
+  
+  Music:
+    type: artist
+    auto_scan: false
+    cleanup_enabled: false
+
+# Maintenance Settings
+maintenance:
+  # Run daily maintenance
+  enabled: true
+  
+  # Time to run maintenance (24-hour format)
+  schedule_time: "06:00"
+  
+  # Tasks to perform
+  tasks:
+    - scan_libraries
+    - cleanup_temp_files
+    - optimize_database
+  
+  # Retain logs for X days
+  log_retention_days: 30
+
+# Notifications (future feature)
+notifications:
+  enabled: false
+  
+# Advanced Settings
+advanced:
+  # Concurrent operations
+  max_workers: 2
+  
+  # Timeout settings (seconds)
+  timeout: 300
+  
+  # Retry attempts
+  max_retries: 3
